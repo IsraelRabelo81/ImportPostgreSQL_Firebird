@@ -54,7 +54,7 @@ user=postgres
 password=
 
 [FIREBIRD]
-path=C:/dados/DB_SGE.FDB
+path=C:/dados/Firebird.FDB
 user=SYSDBA
 password=masterkey
 ```
