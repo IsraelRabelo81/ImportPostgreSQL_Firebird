@@ -2,62 +2,159 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.geometry.Insets?>
-<VBox spacing="10"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="ui.MainController">
-    <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
-    </padding>
 
-    <Label text="Configuração PostgreSQL"/>
+<!-- ✅ fx:controller no elemento RAIZ = ScrollPane -->
+<ScrollPane fitToWidth="true"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ui.MainController">
 
-    <GridPane hgap="10" vgap="10">
-        <Label text="Host:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="pgHost" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+    <content>
 
-        <Label text="Porta:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="pgPort" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <VBox spacing="10"
+              prefWidth="600">
 
-        <Label text="Banco:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <TextField fx:id="pgDatabase" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
 
-        <Label text="Usuário:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <TextField fx:id="pgUser" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            <!-- TÍTULO -->
+            <Label text="Exportador SGE - PostgreSQL → TXT"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
 
-        <Label text="Senha:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-        <PasswordField fx:id="pgPassword" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-    </GridPane>
+            <Separator/>
 
-    <Separator/>
+            <!-- CONFIGURAÇÃO POSTGRESQL -->
+            <Label text="Configuração PostgreSQL"
+                   style="-fx-font-weight: bold;"/>
 
-    <Label text="Configuração Firebird"/>
+            <GridPane hgap="10" vgap="8">
 
-    <GridPane hgap="10" vgap="10">
-        <Label text="Caminho:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="fbPath" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Label text="Host:"
+                       GridPane.rowIndex="0"
+                       GridPane.columnIndex="0"/>
+                <TextField fx:id="pgHost"
+                           promptText="localhost"
+                           prefWidth="200"
+                           GridPane.rowIndex="0"
+                           GridPane.columnIndex="1"/>
 
-        <Label text="Usuário:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="fbUser" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Label text="Porta:"
+                       GridPane.rowIndex="1"
+                       GridPane.columnIndex="0"/>
+                <TextField fx:id="pgPort"
+                           promptText="5432"
+                           prefWidth="200"
+                           GridPane.rowIndex="1"
+                           GridPane.columnIndex="1"/>
 
-        <Label text="Senha:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <PasswordField fx:id="fbPassword" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-    </GridPane>
+                <Label text="Banco:"
+                       GridPane.rowIndex="2"
+                       GridPane.columnIndex="0"/>
+                <TextField fx:id="pgDatabase"
+                           promptText="SOFTMOBILE"
+                           prefWidth="200"
+                           GridPane.rowIndex="2"
+                           GridPane.columnIndex="1"/>
 
-    <Separator/>
+                <Label text="Usuário:"
+                       GridPane.rowIndex="3"
+                       GridPane.columnIndex="0"/>
+                <TextField fx:id="pgUser"
+                           promptText="postgres"
+                           prefWidth="200"
+                           GridPane.rowIndex="3"
+                           GridPane.columnIndex="1"/>
 
-    <Label text="Importar"/>
+                <Label text="Senha:"
+                       GridPane.rowIndex="4"
+                       GridPane.columnIndex="0"/>
+                <PasswordField fx:id="pgPassword"
+                               prefWidth="200"
+                               GridPane.rowIndex="4"
+                               GridPane.columnIndex="1"/>
 
-    <HBox spacing="10">
-        <CheckBox fx:id="chkProduct" text="Produtos"/>
-        <CheckBox fx:id="chkSupplier" text="Fornecedores"/>
-        <CheckBox fx:id="chkClient" text="Clientes"/>
-    </HBox>
+                <Button text="🔌 Testar Conexão"
+                        onAction="#onTestarConexao"
+                        prefWidth="150"
+                        GridPane.rowIndex="5"
+                        GridPane.columnIndex="1"/>
 
-    <HBox spacing="10">
-        <Button text="Testar Conexão" onAction="#onTestConnection"/>
-        <Button text="Importar" onAction="#onImport"/>
-    </HBox>
+            </GridPane>
 
-</VBox>
+            <!-- STATUS CONEXÃO -->
+            <Label fx:id="lblStatusConexao"
+                   text=""
+                   style="-fx-font-weight: bold;"/>
+
+            <Separator/>
+
+            <!-- PASTA DE SAÍDA -->
+            <Label text="Pasta de Saída dos Arquivos .TXT"
+                   style="-fx-font-weight: bold;"/>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="txtPastaSaida"
+                           promptText="Selecione a pasta de destino..."
+                           prefWidth="430"
+                           editable="false"/>
+                <Button text="Selecionar"
+                        onAction="#onSelecionarPasta"/>
+            </HBox>
+
+            <Separator/>
+
+            <!-- SELEÇÃO -->
+            <Label text="Selecione o que deseja exportar:"
+                   style="-fx-font-weight: bold;"/>
+
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <CheckBox fx:id="chkProdutos"     text="Produtos"/>
+                <CheckBox fx:id="chkClientes"     text="Clientes"/>
+                <CheckBox fx:id="chkFornecedores" text="Fornecedores"/>
+            </HBox>
+
+            <Separator/>
+
+            <!-- BOTÕES -->
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="GERAR ARQUIVOS .TXT"
+                        onAction="#onGerarArquivos"
+                        prefWidth="200"
+                        prefHeight="35"
+                        style="-fx-font-weight: bold;
+                               -fx-font-size: 13px;
+                               -fx-background-color: #2196F3;
+                               -fx-text-fill: white;"/>
+
+                <Button text="Limpar Log"
+                        onAction="#onLimparLog"
+                        prefWidth="120"
+                        prefHeight="35"/>
+            </HBox>
+
+            <Separator/>
+
+            <!-- LOG -->
+            <Label text="Log de Execução:"
+                   style="-fx-font-weight: bold;"/>
+
+            <TextArea fx:id="txtLog"
+                      prefHeight="180"
+                      editable="false"
+                      wrapText="true"
+                      style="-fx-font-family: 'Courier New';
+                             -fx-font-size: 11px;"/>
+
+            <!-- STATUS RODAPÉ -->
+            <HBox alignment="CENTER_LEFT">
+                <Label fx:id="lblStatus"
+                       text="Aguardando..."
+                       style="-fx-text-fill: gray;"/>
+            </HBox>
+
+        </VBox>
+
+    </content>
+
+</ScrollPane>

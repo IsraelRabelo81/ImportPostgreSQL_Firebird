@@ -7,6 +7,12 @@ import java.util.Map;
 
 public class ConfigService {
 
+    private static final String PATH_CONFIG = "confi.ini";
+
+    public static void inicializar() {
+        createFile(PATH_CONFIG);
+    }
+
     public static void createFile(String pathFile) {
         File file = new File(pathFile);
 
@@ -21,7 +27,6 @@ public class ConfigService {
             } else {
                 readFile(pathFile);
             }
-
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -32,8 +37,8 @@ public class ConfigService {
 
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String section = "";
-
             String line;
+
             while ((line = br.readLine()) != null) {
                 line = line.trim();
 
@@ -57,19 +62,44 @@ public class ConfigService {
 
     }
 
+    public static void saveFile(String path, Map<String, String> config) throws Exception {
+
+        try (FileWriter writer = new FileWriter(path)){
+            writer.write("[POSTGRES]\n");
+            writer.write("host=" + config.getOrDefault("POSTGRES.host", "localhost") + "\n");
+            writer.write("port=" + config.getOrDefault("POSTGRES.port", "5432") + "\n");
+            writer.write("database=" + config.getOrDefault("POSTGRES.database", "database") + "\n");
+            writer.write("user=" + config.getOrDefault("POSTGRES.user", "user") + "\n");
+            writer.write("password=" + config.getOrDefault("POSTGRES.password", "") + "\n");
+            writer.write("\n");
+            writer.write("[EXPORTACAO]\n");
+            writer.write("pasta_saida=" + config.getOrDefault("EXPORTACAO.pasta_saida", "") + "\n");
+
+        }
+
+    }
+
+    public static String get(String key) {
+        try {
+            Map<String, String> config = readFile(PATH_CONFIG);
+            return config.getOrDefault(key, "");
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
     private static void writeStandardContent(File file) throws Exception {
         try (FileWriter writer = new FileWriter(file)) {
+            writer.write("# Configurações do Exportador SGE\n\n");
             writer.write("[POSTGRES]\n");
             writer.write("host=localhost\n");
             writer.write("port=5433\n");
-            writer.write("database=\n");
+            writer.write("database=SOFTMOBILE\n");
             writer.write("user=postgres\n");
             writer.write("password=\n");
             writer.write("\n");
-            writer.write("[FIREBIRD]\n");
-            writer.write("path=C:/dados/DB_SGE.FDB\n");
-            writer.write("user=SYSDBA\n");
-            writer.write("password=masterkey\n");
+            writer.write("[EXPORTACAO]\n");
+            writer.write("pasta_saida\n");
 
         }
     }

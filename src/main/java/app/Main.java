@@ -9,10 +9,16 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("MainView.fxml"));
-        Scene scene = new Scene(loader.load());
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getClassLoader().getResource("MainView.fxml")
+        );
 
-        stage.setTitle("Importador PostgreSQL -> Firebird");
+        Scene scene = new Scene(loader.load(), 640, 700);
+
+        stage.setTitle("Exportador SGE - PostgreSQL -> TXT");
+        stage.setMinWidth(640);
+        stage.setMinHeight(700);
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
     }
